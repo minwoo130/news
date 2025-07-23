@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>내 스크랩 뉴스 목록</title>
+    <style>
+        /* Reset & 기본 스타일 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            background: #f8f9fa;
+            color: #333;
+            padding: 0 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(to right, #007BFF, #00d2ff);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        nav a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #ffde59;
+        }
+
+        /* 스크랩 뉴스 카드 */
+        .favorites-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+        .favorites-list li {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            display: flex;   
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .favorites-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .favorites-list li a.title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .favorites-list li a.title:hover {
+            color: #007BFF;
+            text-decoration: underline;
+        }
+        .favorites-list li p.summary {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* 버튼 스타일 */
+        form.delete-form {
+            align-self: flex-start;
+        }
+        form.delete-form button {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        form.delete-form button:hover {
+            background-color: #a71d2a;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 600px) {
+            body {
+                padding: 0 15px;
+                margin: 20px auto;
+            }
+            header h1 {
+                font-size: 1.6rem;
+            }
+            nav a {
+                font-size: 0.9rem;
+            }
+            .favorites-list li a.title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>내 스크랩 뉴스</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">홈</a>
+            <a href="{{ url_for('logout') }}">로그아웃</a>
+        </nav>
+    </header>
+
+    {% if favorites %}
+        <ul class="favorites-list">
+            {% for fav in favorites %}
+            <li>
+                <!-- 제목을 클릭하면 실제 기사로 이동 -->
+                <a href="{{ fav.url | url_decode }}" target="_blank" rel="noopener noreferrer" class="title">{{ fav.title }}</a>
+                {% if fav.summary %}
+                <p class="summary">{{ fav.summary }}</p>
+                {% endif %}
+                <form method="POST" action="{{ url_for('remove_favorite') }}" class="delete-form">
+                    <input type="hidden" name="favorite_id" value="{{ fav.id }}">
+                    <button type="submit">삭제 ✕</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>스크랩한 뉴스가 없습니다.</p>
+    {% endif %}
+</body>
+</html>
+

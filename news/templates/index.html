@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NewsAPI 뉴스 요약</title>
+    <style>
+        /* 통합 CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: #f9fafb;
+            color: #333;
+            padding: 0 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        nav a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: 600;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        form {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+        }
+        form input[type="text"] {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        form input[type="text"]:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+        form input[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600; cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        li a {
+            font-weight: 700;
+            color: #222;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        li a:hover {
+            text-decoration: underline;
+        }
+        li p {
+            margin: 8px 0 0;
+            color: #555;
+            line-height: 1.4;
+        }
+        p.no-results {
+            font-style: italic;
+            color: #666;
+        }
+        /* 스크랩 버튼 스타일 */
+        .favorite-form {
+            margin-top: 8px;
+        }
+        .favorite-form button {
+            background-color: #ffc107;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .favorite-form button:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>최신 뉴스</h1>
+        <nav>
+            {% if username %}
+                <span>환영합니다, {{ username }}님</span>
+		<a href="{{ url_for('index') }}">홈</a>
+		<a href="{{ url_for('favorites') }}">내 스크랩</a>
+		<a href="{{ url_for('logout') }}">로그아웃</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">로그인</a>
+                <a href="{{ url_for('register') }}">회원가입</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <form method="GET" action="/">
+        <input type="text" name="query" placeholder="검색어를 입력하세요" value="{{ query | default('속보') }}">
+        <input type="submit" value="검색">
+    </form>
+
+    {% if articles %}
+    <ul>
+        {% for article in articles %}
+            <li>
+                <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">{{ article.title }}</a>
+                {% if article.description %}
+                <p>{{ article.description }}</p>
+                {% endif %}
+                <form action="/favorite" method="POST" class="favorite-form">
+                    <input type="hidden" name="title" value="{{ article.title }}">
+                    <input type="hidden" name="url" value="{{ article.url }}">
+                    <input type="hidden" name="summary" value="{{ article.description }}">
+                    <button type="submit">📌 스크랩</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p class="no-results">검색 결과가 없습니다.</p>
+    {% endif %}
+</body>
+</html>
+

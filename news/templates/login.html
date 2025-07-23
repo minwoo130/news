@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>로그인</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        form { max-width: 300px; margin: auto; }
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; cursor: pointer;
+        }
+        .flash { color: red; margin-bottom: 10px; }
+        a { display: block; margin-top: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>로그인</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for msg in messages %}
+            <p>{{ msg }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('login') }}">
+        <label for="username">아이디:</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required />
+
+        <input type="submit" value="로그인" />
+    </form>
+
+    <a href="{{ url_for('register') }}">회원가입 하러 가기</a>
+</body>
+</html>
+
